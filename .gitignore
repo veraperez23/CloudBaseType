@@ -1,0 +1,10 @@
+datos/
+imagenes_day/
+imagenes_todoeldia/
+imagenes_night/
+
+results/
+venv_ALTURA/
+wandb/
+
+ejecutar.txt
