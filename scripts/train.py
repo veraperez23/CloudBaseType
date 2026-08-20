@@ -55,24 +55,24 @@ def train_regression(model, optimizer, scheduler, train_dataloader, val_dataload
                 freeze_backbone_layers(model, freeze=False)
 
         model.train() # Ponemos el modelo en modo entrenamiento
-        running_loss = 0.0 # Guardará el MSE total
+        running_loss = 0.0 # Guardará la pérdida total
         running_correct = 0
         total_samples = 0
 
         # BUCLE DE BATCHES (Lotes de imágenes)
         for batch in tqdm(train_dataloader, desc=f"Epoch {epoch+1}/{epochs}"):
             inputs = batch[0].to(device, non_blocking=True) #imágenes
-            labels = batch[1].to(device, non_blocking=True) #alturas de las imagenes
+            labels = batch[1].to(device, non_blocking=True) #clases
 
             try:
                 with torch.amp.autocast(device_type='cuda', enabled=use_amp):
-                    # 1. La red hace la predicción
+                    #predicción
                     logits = model(inputs)
                     
-                    # 2. Ajustamos dimensiones: de [batch_size, 1] a [batch_size]
+                    #Ajustamos las dimensiones de [batch_size, 1] a [batch_size]
                     logits = logits.squeeze(dim=1) 
                     
-                    # 3. Calculamos el error
+                    # Cálculos de error
                     loss = criterion(logits, labels)
                     loss = loss / accum_steps #accum_steps es para que el ordenador trate imágenes de menos en menos, por ejemplo grupos de 4.
                     #el error medio lo va a dividir entre este número de steps para asemejar a que has metido todas las fotos de golpe
@@ -81,7 +81,6 @@ def train_regression(model, optimizer, scheduler, train_dataloader, val_dataload
                     print("Warning: NaN loss encountered. Skipping batch.")
                     continue
 
-                # 4. Aprendemos del error (Backward pass)
                 if use_amp:
                     scaler.scale(loss).backward()
                 else:
@@ -114,7 +113,7 @@ def train_regression(model, optimizer, scheduler, train_dataloader, val_dataload
                 print(f"Error during training step: {e}")
                 continue
                 
-        # Actualizamos el learning rate
+        # ACTUALIZAMOS LEARNING RATE
         if warmup == False:
             scheduler.step()
         else:

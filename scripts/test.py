@@ -28,7 +28,7 @@ def test(model, test_dataloader, modelname, device, mode_test=False, save_errors
     with open(json_dir, "w") as f:
         json.dump(results, f, indent=4)
 
-    # --- ARCHIVO 1: Resumen General (results_test.txt) ---
+    # --- results_test.txt ---
     fmt_resumen = "{0:25} | {1:15} | {2:15} | {3:15} | {4:15} | {5:15}\n"
     s_resumen = fmt_resumen.format("Modelo", "Loss", "Accuracy", "RMSE", "MAE", "STD")
     s_resumen += "-" * 63 + "\n"
@@ -38,7 +38,7 @@ def test(model, test_dataloader, modelname, device, mode_test=False, save_errors
     with open(os.path.join(os.getcwd(), 'results_test.txt'), "w") as f:
         f.write(s_resumen)
 
-    # --- ARCHIVO 2: Predicciones Individuales (predicciones_detalladas.txt) ---
+    # --- predicciones_detalladas.txt ---
     fmt_detallado = "{0:40} | {1:15} | {2:15} \n"
     s_detallado = fmt_detallado.format("Nombre de Imagen", "Real (m)", "Predicho (m)")
     s_detallado += "-" * 90 + "\n"

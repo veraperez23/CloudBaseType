@@ -6,12 +6,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
-#Si quiero separar entre día y noche tengo que poner val_dataloader_day y val_dataloader_night
 def validate(model, val_dataloader, device, use_wandb=False, mode_test=False, save_errors=False, cm_file="confusion_matrix.png", save_confusion_matrix= True):
 
     model.eval() #modelo en modo examen (congela el aprendizaje)
 
-    # Función para evaluar cualquier dataloader (día o noche) y no repetir el código dos veces
     def evaluar_conjunto(dataloader, nombre_conjunto):
         total_loss = 0.0
         total_correct = 0
@@ -92,7 +90,6 @@ def validate(model, val_dataloader, device, use_wandb=False, mode_test=False, sa
 
         if save_errors and len(misclassified) > 0:
             df = pd.DataFrame(misclassified, columns=["image_path", "true_label", "pred_label"])
-            # NOTA: Cambié error_file por un nombre directo ya que la variable no estaba definida arriba
             df.to_csv("misclassified.csv", index=False)
             print(f"Se guardaron {len(misclassified)} errores en misclassified.csv")
 
@@ -135,26 +132,3 @@ def validate(model, val_dataloader, device, use_wandb=False, mode_test=False, sa
     else:
         return accuracy_global
 
-
-    #SI HAGO LA SEPARACIÓN EN DÍA Y NOCHE
-    #mse_day, rmse_day = evaluar_conjunto(val_dataloader_day, "Día")
-    #mse_night, rmse_night = evaluar_conjunto(val_dataloader_night, "Noche")
-
-    # 3. Calculamos el error medio global
-    #rmse_global = (rmse_day + rmse_night) / 2.0
-
-    # 4. Devolvemos resultados dependiendo de lo que haya pedido el bucle
-    # if mode_test:
-    #     # Si es el examen final, devolvemos un diccionario con todos los detalles
-    #     print(f"\n[Examen Final] RMSE Día: {rmse_day:.2f}m | RMSE Noche: {rmse_night:.2f}m")
-    #     return {
-    #         "rmse_global": rmse_global,
-    #         "rmse_day": rmse_day,
-    #         "rmse_night": rmse_night,
-    #         "mse_day": mse_day,
-    #         "mse_night": mse_night
-    #     }
-    # else:
-    #     # Si estamos en medio del entrenamiento, solo devolvemos el error global
-    #     # para que el 'train.py' sepa si tiene que guardar el modelo (Early Stopping)
-    #     return rmse_global

@@ -18,7 +18,7 @@ from scripts.test import test
 from dataset.dataset import CloudDataset
 from archs.__init__ import make_model
 
-os.environ['WANDB_API_KEY'] = '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'
+#os.environ['WANDB_API_KEY'] = 
 if __name__=='__main__':
 
     parser = argparse.ArgumentParser()
@@ -73,7 +73,7 @@ if __name__=='__main__':
 
     train_dataset = CloudDataset(folder_path=train_dir, txt_path="./datos/train.txt", transform=transform_train)
     
-    # if cfg.train.refine_flag == True: #no lo usamos en este proyecto (por qué?)
+    # if cfg.train.refine_flag == True: #no lo usamos en este proyecto
 
     #     refine_dir = cfg.train.refine_dir
     #     refine_dataset = datasets.ImageFolder(refine_dir, transform_train)

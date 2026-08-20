@@ -23,22 +23,21 @@ The exact logic is implemented in [dataset/dataset.py](dataset/dataset.py), wher
 
 ```text
 .
-├── archs/                  # Available model architectures (VGG, ResNet, ViT, Swin, ConvNeXt, etc.)
+├── archs/                  # Available model architectures
+├── config/                 # Additional configuration files
 ├── dataset/                # Dataset implementation
-├── datos/                  # Train/val/test split files (.txt)
+├── datos/                  # Dataset split files (.txt)
 ├── imagenes_day/           # Daytime images
 ├── imagenes_night/         # Night-time images
-├── imagenes_todoeldia/     # Full-day images
-├── results/                # Trained models and outputs
-├── scripts/                # Training and validation logic
-├── utils/                  # Augmentations and utilities
-├── baseline.yml            # Full-day configuration
-├── baseline_day.yml        # Daytime configuration
-├── baseline_night.yml      # Night-time configuration
-├── run.py                  # Main entry point
-├── requirements.txt        # Project dependencies
-├── README.md               # Project documentation
-└── ejecuta.txt             # Quick execution notes
+├── imagenes_todoeldia/     # Images from the full day
+├── results/                # Trained models and inference outputs
+├── scripts/                # Training, validation, and testing logic
+├── utils/                  # Augmentations, losses, and utilities
+├── baseline.yml            # Full-day training configuration
+├── baseline_day.yml        # Daytime training configuration
+├── baseline_night.yml      # Night-time training configuration
+├── requirements.txt        # Python dependencies
+└── run.py                  # Main training and inference entry point
 ```
 
 ## Requirements

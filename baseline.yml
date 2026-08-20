@@ -14,7 +14,7 @@ train:
     out_path: "results/"
     patience: 20
     refine_flag: False
-    refine_dir: '/home/brulon/Imágenes/Allsky/refine_data'
+    refine_dir: ''
     percentage_refine: 0.08
     physics_degradations: False
 
