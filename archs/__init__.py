@@ -17,7 +17,7 @@ def select_model(pick, model_cfg):
         if model_cfg.bn:
             model_name += "_bn"
 
-        model = timm.create_model(model_name, pretrained=False, num_classes= model_cfg.num_classes, in_chans= model_cfg.in_chans, output_stride= model_cfg.output_stride, 
+        model = timm.create_model(model_name, pretrained=True, num_classes= model_cfg.num_classes, in_chans= model_cfg.in_chans, output_stride= model_cfg.output_stride, 
                                   global_pool= model_cfg.global_pool, drop_rate= model_cfg.drop_rate)
 
         return model
@@ -26,7 +26,7 @@ def select_model(pick, model_cfg):
 
         model_name = f"resnet{model_cfg.type}"
 
-        model = timm.create_model(model_name, pretrained=False, num_classes= model_cfg.num_classes, in_chans= model_cfg.in_chans, output_stride= model_cfg.output_stride, 
+        model = timm.create_model(model_name, pretrained=True, num_classes= model_cfg.num_classes, in_chans= model_cfg.in_chans, output_stride= model_cfg.output_stride, 
                                   global_pool= model_cfg.global_pool, drop_rate= model_cfg.drop_rate, drop_path_rate= model_cfg.drop_path_rate)
 
         return model
@@ -75,7 +75,7 @@ def select_model(pick, model_cfg):
 
         model_name = f"swin_{model_cfg.type}_patch4_window7_224"
 
-        model = timm.create_model(model_name, pretrained=False, num_classes=model_cfg.num_classes, in_chans=model_cfg.in_chans, drop_rate=model_cfg.drop_rate,
+        model = timm.create_model(model_name, pretrained=True, num_classes=model_cfg.num_classes, in_chans=model_cfg.in_chans, drop_rate=model_cfg.drop_rate,
                                 drop_path_rate=model_cfg.drop_path_rate, global_pool=model_cfg.global_pool, img_size=model_cfg.img_size)
 
         return model
