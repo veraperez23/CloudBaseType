@@ -5,7 +5,7 @@ wandb:
 
 
 train:
-    train_dir: './imagenes_todoeldia/imagenes train'
+    train_dir: './imagenes_train'
     batch_size: 8
     num_workers: 0
     loss: 'CrossEntropyLoss' # MSE | CrossEntropyLoss | CustomLoss
@@ -58,13 +58,13 @@ optim:
 
 
 validation:
-    val_dir: './imagenes_todoeldia/imagenes_val'
+    val_dir: './imagenes_val'
     batch_size: 8
     num_workers: 0 #teníamos puesto antes 16, si se sobrecalienta mucho el ordenador poner 2 o 0
 
 
 test:
-    test_dir: './imagenes_todoeldia/imagenes_test'
+    test_dir: './imagenes_test'
     batch_size: 8
     num_workers: 0
     save_errors: False

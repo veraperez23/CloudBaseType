@@ -63,7 +63,7 @@ class CloudDataset(BaseDataset):
         
         label = torch.tensor(clase, dtype=torch.long)
 
-        return image, label
+        return image, label, img_name
 
 
 

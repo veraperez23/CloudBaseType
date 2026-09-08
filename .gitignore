@@ -1,10 +1,11 @@
 datos/
-imagenes_day/
-imagenes_todoeldia/
-imagenes_night/
+imagenes_train/
+imagenes_test/
+imagenes_val/
 
 results/
 venv_ALTURA/
 wandb/
 
 ejecutar.txt
+matrices_confusion.ipynb

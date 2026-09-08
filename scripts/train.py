@@ -103,7 +103,7 @@ def train_regression(model, optimizer, scheduler, train_dataloader, val_dataload
                 #Weights & Biases
                 if use_wandb:
                     wandb.log({"Loss": loss.item()})
-                    wandb.log({"Accuracy": accuracy}) # La raíz cuadrada nos da el error en metros
+                    wandb.log({"Accuracy": accuracy}) 
 
                 running_loss += loss.item() * labels.size(0)
                 running_correct += correct
