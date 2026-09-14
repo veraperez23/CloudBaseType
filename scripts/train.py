@@ -33,7 +33,7 @@ def train_regression(model, optimizer, scheduler, train_dataloader, val_dataload
     ruta_ultimo_checkpoint = os.path.join(ruta_carpeta, "ultimo_checkpoint.pt")
 
     if os.path.exists(ruta_ultimo_checkpoint):
-        print(f"Encontrado checkpoint previo. Reanudando...")
+        print(f"Previous checkpoint found. Resuming...")
         checkpoint_guardado = torch.load(ruta_ultimo_checkpoint)
         
         # Restauramos los pesos
@@ -41,7 +41,7 @@ def train_regression(model, optimizer, scheduler, train_dataloader, val_dataload
         optimizer.load_state_dict(checkpoint_guardado['estado_optimizador'])
         start_epoch = checkpoint_guardado['epoca'] + 1
     else:
-        print("No hay guardados previos. Empezando desde cero...")
+        print("No previous checkpoints found. Starting from scratch...")
     
     for epoch in range(start_epoch, epochs):
 
@@ -147,7 +147,7 @@ def train_regression(model, optimizer, scheduler, train_dataloader, val_dataload
                         break
 
 
-        print(f"Época {epoch} terminada.")
+        print(f"Epoch {epoch} finished.")
         torch.save({
             'epoca': epoch,
             'estado_modelo': model.state_dict(),

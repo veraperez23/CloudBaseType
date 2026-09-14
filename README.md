@@ -1,52 +1,55 @@
 # Cloud Base Height Classification
 
-This repository contains a deep learning pipeline for classifying sky images according to cloud-base height. The actual task implemented by this project is not continuous regression, but a three-class classification based on the estimated cloud height.
+This project trains a deep learning model to classify sky images into cloud-base height categories. The implementation in this repository is a 3-class classification task, not a continuous regression problem.
 
-In the dataset, the height values are converted into discrete labels:
+## Class definition
+
+The dataset converts cloud-base height values into discrete classes:
 
 - Class 0: height < 2000 m
 - Class 1: 2000 m <= height < 6000 m
 - Class 2: height >= 6000 m
 
-The exact logic is implemented in [dataset/dataset.py](dataset/dataset.py), where each image is assigned a class based on the value found in the data file.
+The class assignment logic is implemented in [dataset/dataset.py](dataset/dataset.py).
 
-## What this repository does
+## What the project does
 
-- Loads sky images from train/val/test folders.
-- Reads a `.txt` file with the format `image_name.jpg;height`
-- Converts the height into a discrete class for classification training.
-- Trains CNN or transformer models on RGB images.
-- Evaluates validation results and saves checkpoints and outputs.
-- Tracks experiments with Weights & Biases.
+- Loads RGB sky images from train/validation/test folders
+- Reads split files with the format `image.jpg;height`
+- Converts height values into class labels
+- Trains CNN or transformer models for multiclass classification
+- Validates performance and saves checkpoints/results
+- Logs metrics to Weights & Biases when enabled
 
-## Repository structure
+## Project structure
 
 ```text
 .
-├── archs/                  # Available model architectures
-├── config/                 # Additional configuration files
-├── dataset/                # Dataset implementation
-├── datos/                  # Dataset split files (.txt)
+├── archs/                  # Model architectures
+├── dataset/                # Dataset loader and label logic
+├── datos/                  # Train/val/test split files (.txt)
 ├── imagenes_train/         # Training images
 ├── imagenes_val/           # Validation images
 ├── imagenes_test/          # Test images
-├── results/                # Trained models and inference outputs
-├── scripts/                # Training, validation, and testing logic
-├── utils/                  # Augmentations, losses, and utilities
-├── baseline.yml            # Full-day training configuration
-├── baseline_day.yml        # Daytime training configuration
-├── baseline_night.yml      # Night-time training configuration
+├── results/                # Trained weights and evaluation outputs
+├── scripts/                # Training, validation and evaluation code
+├── utils/                  # Data augmentation and utilities
+├── baseline.yml            # Main experiment configuration
+├── README.md               # Project documentation
 ├── requirements.txt        # Python dependencies
-└── run.py                  # Main training and inference entry point
+├── run.py                  # Training/inference entry point
+├── wandb/                  # W&B local run metadata
+├── venv_ALTURA/            # Local virtual environment
+└── tea_debug.log           # Debug log file
 ```
 
-## Requirements
+## Environment requirements
 
 - Python 3.10+
-- PyTorch + torchvision
-- CUDA is recommended for faster training
-- Project dependencies are listed in [requirements.txt](requirements.txt)
-- A Weights & Biases account if `wandb.use: True` is enabled
+- PyTorch and torchvision
+- CUDA-enabled GPU recommended for faster training
+- Dependencies listed in [requirements.txt](requirements.txt)
+- Optional: Weights & Biases account for `wandb.use: True`
 
 ## Installation
 
@@ -54,42 +57,44 @@ From the repository root:
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # Linux/macOS
-# or in Windows PowerShell:
-# .\.venv\Scripts\Activate.ps1
 ```
 
-Install the dependencies:
+On Linux/macOS:
+
+```bash
+source .venv/bin/activate
+```
+
+On Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Then install the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-If you prefer to install manually, the project typically uses:
-
-```bash
-pip install torch torchvision torchaudio timm wandb fvcore PyYAML tqdm opencv-python matplotlib imageio pillow numpy scikit-learn seaborn pandas
-```
-
 ## Data format
 
-Each line in the `.txt` files must follow this pattern:
+Each line in the dataset text files must follow this pattern:
 
 ```text
-image.jpg;height
+image_name.jpg;height
 ```
 
 Example:
 
 ```text
-IMG_0001.jpg;1250.5
-IMG_0002.png;980.0
-IMG_0003.jpg;6500.0
+C009_20240224_2034.jpg;7957
+C009_20240601_1025.jpg;1495
 ```
 
-The filenames must match the images in the corresponding directory. The data loader checks that the image exists and then converts the height value into a class.
+The file names must match the corresponding images in the dataset directories.
 
-The dataset split files used by this repository are:
+The split files used in this project are:
 
 ```text
 datos/train.txt
@@ -103,14 +108,28 @@ datos/val_night.txt
 datos/test_night.txt
 ```
 
-These files were generated by the `conjunto_datos.py` script in the `CloudBaseHeight` repository. Each file contains the image filename and its estimated cloud-base height, separated by a semicolon. The filenames must correspond to images in `imagenes_train/`, `imagenes_val/`, or `imagenes_test/`, depending on the split.
+## Configuration
 
+The main setup is defined in [baseline.yml](baseline.yml). It controls:
 
-## Project configuration
+- dataset directories
+- batch size and workers
+- optimizer and scheduler settings
+- model choice
+- W&B usage
+- classification loss
 
-The YAML files define image paths, batch size, architecture, learning rate, and W&B usage. The main configuration is [baseline.yml](baseline.yml), which uses the train, validation, and test image folders shown above.
+The current project configuration uses 3 output classes and a model selected by `model.pick`:
 
-In [baseline.yml](baseline.yml), the model is configured with `num_classes: 3` and `model.pick: 8`, for example a ConvNeXt-V2 model. This confirms that the project is working on a multi-class classification task rather than continuous height regression.
+```yaml
+model:
+  pick: 8
+  models:
+    - model: "convnext_v2"
+      num_classes: 3
+```
+
+This confirms the active task is multi-class classification instead of regression.
 
 ## Training
 
@@ -120,65 +139,67 @@ From the repository root:
 python run.py --mode train --config baseline.yml
 ```
 
-Optionally, you can select the device and the experiment name:
+Optional arguments:
 
 ```bash
 python run.py --mode train --config baseline.yml --device 0 --name my_model
 ```
 
-The results and checkpoints are saved in the [results](results) and [checkpoints](checkpoints) directories when applicable.
+Training will save model checkpoints and output artifacts under the [results](results) folder.
 
 ## Validation
 
-Validation runs automatically during training through the function in [scripts/val.py](scripts/val.py). This function computes:
+Validation is run during training automatically via [scripts/val.py](scripts/val.py). The evaluation includes metrics such as:
 
 - accuracy
 - loss
 - MAE
 - RMSE
 - standard deviation
-- confusion matrix (if enabled)
+- confusion matrix (when enabled)
 
 ## Inference
 
-To run inference with a trained model:
+To run inference with a saved model:
 
 ```bash
 python run.py --mode inference --config baseline.yml --name test-model_110040
 ```
 
-The name must match the results folder and the generated `.pt` file.
-
-## Important note about the current implementation
-
-Although the original YAML files and documentation refer to a regression problem, the actual code in this repository performs 3-class classification. The evidence is:
-
-- [dataset/dataset.py](dataset/dataset.py): converts height into classes `0, 1, 2`
-- [baseline.yml](baseline.yml): `num_classes: 3`
-- [scripts/train.py](scripts/train.py): uses `CrossEntropyLoss`
-- [scripts/val.py](scripts/val.py): evaluates accuracy and confusion matrix
-
-For this reason, the README has been adjusted to reflect the actual task performed by the project.
+The model name should match the folder and checkpoint file generated under [results](results).
 
 ## Weights & Biases
 
-The project can log metrics to W&B when `wandb.use` is enabled in the configuration. To authenticate:
+The project can log training metrics to W&B when `wandb.use` is enabled in the YAML file.
+
+To authenticate:
 
 ```bash
 wandb login
 ```
 
-If you do not want to use W&B, disable it in the YAML:
+If you want to disable tracking:
 
 ```yaml
 wandb:
   use: False
 ```
 
-## Recommendations
+## Important implementation note
 
-- Run the commands from the repository root.
-- Make sure the images and `.txt` files remain synchronized.
-- Check that the directories used by `train_dir`, `val_dir`, and `test_dir` match the actual dataset structure.
-- When switching between day, night, or full-day data, ensure the corresponding split files are also updated.
+Although some older references may describe a regression task, the current codebase actually performs 3-class cloud-height classification. The evidence is:
+
+- [dataset/dataset.py](dataset/dataset.py): height values are mapped to classes 0, 1, and 2
+- [baseline.yml](baseline.yml): `num_classes: 3`
+- [scripts/train.py](scripts/train.py): uses `CrossEntropyLoss`
+- [scripts/val.py](scripts/val.py): evaluates accuracy/confusion matrix
+
+## Recommended workflow
+
+1. Create the virtual environment and install dependencies.
+2. Check that the images and split files are aligned in the expected folders.
+3. Update the paths in [baseline.yml](baseline.yml) if needed.
+4. Run training with `python run.py --mode train --config baseline.yml`.
+5. Check the saved results and checkpoints in [results](results).
+
 

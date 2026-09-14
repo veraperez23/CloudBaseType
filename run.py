@@ -43,10 +43,10 @@ if __name__=='__main__':
     if torch.cuda.is_available():
         device = torch.device(f'cuda:{GPU}')
         torch.cuda.set_device(device)
-        print(f"Usando Tarjeta Gráfica NVIDIA (GPU {GPU})")
+        print(f"Using NVIDIA GPU (GPU {GPU})")
     else:
         device = torch.device("cpu")
-        print("No se detectó GPU NVIDIA. Usando el Procesador (CPU).")
+        print("No NVIDIA GPU detected. Using CPU.")
 
     with open(os.path.join(args.config), "r") as f:
         config = yaml.safe_load(f)
@@ -171,10 +171,10 @@ if __name__=='__main__':
 
         ruta_modelo = os.path.join("results", args.name, f"{args.name}.pt")
         if os.path.exists(ruta_modelo):
-            print(f"--> Cargando conocimientos guardados desde: {ruta_modelo}")
+            print(f"Loading saved model weights from: {ruta_modelo}")
             model.load_state_dict(torch.load(ruta_modelo, map_location=device))
         else:
-            print(f"¡CUIDADO! No se ha encontrado el archivo del modelo en: {ruta_modelo}")
+            print(f"WARNING: Model file not found at: {ruta_modelo}")
 
 
         print(f"""
@@ -200,14 +200,14 @@ if __name__=='__main__':
                     run_id = f.read().strip()
                 
                 wandb.init(project=cfg.wandb.project, id=run_id, resume="must", config=cfg)
-                print(f" Reanudando sesión de W&B con ID: {run_id}")
+                print(f" Resuming W&B session with ID: {run_id}")
             else:
                 # Si no existe, creamos una nueva ejecución y guardamos su ID en Drive
                 run = wandb.init(project=cfg.wandb.project, name=MODEL_NAME, config=cfg)
                 
                 with open(ruta_wandb_id, 'w') as f:
                     f.write(run.id)
-                print(f"🚀 Nueva sesión de W&B iniciada. ID guardado: {run.id}")
+                print(f"New W&B session started. ID saved: {run.id}")
                 
             wandb.save(f"{CONFIG}")
 
